@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>减脂计划 - AI健身助手</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4ecdc4;
+            --secondary-color: #ff6b6b;
+            --dark-color: #556270;
+            --accent-color: #c06c84;
+            --light-color: #f8f9fc;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #556270, #4ecdc4);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">减脂计划</h1>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <h3>计划概述</h3>
+                    <p>这是一个专为您定制的减脂计划。本计划结合有氧训练和力量训练，帮助您科学减脂，保持肌肉，塑造健康体态。</p>
+                    <p>每周训练频率：4-6次，每次训练时长约45-60分钟。</p>
+                    <p>预期效果：遵循计划训练8-12周后，可预期减少6-8kg的体脂。</p>
+                </div>
+                
+                <div class="card">
+                    <h3>每周安排</h3>
+                    <ul>
+                        <li><strong>周一：</strong> 高强度间歇训练 (HIIT) + 上身力量训练</li>
+                        <li><strong>周二：</strong> 中强度有氧训练 (30-40分钟) + 核心训练</li>
+                        <li><strong>周三：</strong> 力量训练（全身）</li>
+                        <li><strong>周四：</strong> 活动恢复（散步、瑜伽或伸展）</li>
+                        <li><strong>周五：</strong> 高强度间歇训练 (HIIT) + 下身力量训练</li>
+                        <li><strong>周六：</strong> 中长距离有氧训练（40-60分钟）</li>
+                        <li><strong>周日：</strong> 完全休息</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>营养建议</h3>
+                    <p>减脂需要科学的饮食计划，建议：</p>
+                    <ul>
+                        <li>保持适度的热量赤字，每天减少300-500卡路里</li>
+                        <li>保持足够的蛋白质摄入（每公斤体重1.8-2.2克）</li>
+                        <li>优先选择低GI值碳水化合物</li>
+                        <li>增加蔬菜和水果的摄入</li>
+                        <li>保持充分的水分摄入，每天至少2升水</li>
+                        <li>减少加工食品、精致糖和饱和脂肪的摄入</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

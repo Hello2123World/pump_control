@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>康复训练计划 - AI健身助手</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4ecdc4;
+            --secondary-color: #ff6b6b;
+            --dark-color: #556270;
+            --accent-color: #c06c84;
+            --light-color: #f8f9fc;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #4ecdc4, #56b4d3, #386fa4);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+        
+        .alert-custom {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">康复训练计划</h1>
+        
+        <div class="alert alert-custom mb-4" role="alert">
+            <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>重要提示</h4>
+            <p>本康复训练计划仅供参考。在开始任何康复训练前，请务必咨询专业医疗人员或物理治疗师，确认适合您的具体情况。</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <h3>计划概述</h3>
+                    <p>这是一个循序渐进的康复训练计划，旨在帮助您安全地恢复身体功能，提高活动能力，减轻疼痛。</p>
+                    <p>康复是一个持续的过程，需要耐心和坚持。本计划将根据您的康复阶段进行调整，从最基础的活动开始，逐步增加难度。</p>
+                </div>
+                
+                <div class="card">
+                    <h3>康复阶段</h3>
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">第一阶段：急性期</h5>
+                                    <p class="card-text">主要目标是控制疼痛和炎症，保护受伤部位，防止进一步损伤。包括适当休息、冰敷、压迫和抬高受伤部位。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">第二阶段：恢复期</h5>
+                                    <p class="card-text">逐步恢复关节活动范围和肌肉力量。进行轻度的关节活动和等长收缩练习，同时继续控制炎症。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">第三阶段：功能恢复期</h5>
+                                    <p class="card-text">加强肌肉力量，提高柔韧性和耐力。包括渐进性抗阻训练、平衡训练和功能性活动。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">第四阶段：回归活动期</h5>
+                                    <p class="card-text">逐步恢复正常活动和运动能力。包括特定运动技能训练、全身协调性训练和防再伤训练。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>训练建议</h3>
+                    <ul>
+                        <li>遵循"无痛原则"，若活动引起明显疼痛，应立即停止</li>
+                        <li>每个动作的重复次数和组数应逐渐增加，不要急于求成</li>
+                        <li>注意训练前的适当热身和训练后的充分伸展</li>
+                        <li>保持规律的训练频率，比如每天进行2-3次短时间的训练</li>
+                        <li>结合适当的营养补充和充足的休息，促进组织修复</li>
+                        <li>定期评估康复进展，及时调整训练计划</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

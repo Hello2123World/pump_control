@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI健身助手</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4ecdc4;
+            --secondary-color: #ff6b6b;
+            --dark-color: #556270;
+            --accent-color: #c06c84;
+            --light-color: #f8f9fc;
+            --particle-color: #ffffff;
+        }
+        
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #556270, #c06c84);
+            background-size: 400% 400%;
+            animation: backgroundGradient 15s ease infinite;
+            color: white;
+        }
+        
+        @keyframes backgroundGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #title-particles {
+            position: absolute;
+            width: 100%;
+            height: 200px;
+            top: 20%;
+            z-index: 2;
+        }
+        
+        .content-container {
+            position: relative;
+            z-index: 3;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .main-title {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            animation: breathe 4s infinite ease-in-out;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        .chat-container {
+            width: 60%;
+            max-width: 800px;
+            margin-top: 3rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            padding: 10px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .chat-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 30px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .chat-input:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .login-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-btn:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chat-messages {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 10px;
+            display: none;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-message {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .glass-highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.4) 0%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                rgba(255, 255, 255, 0) 100%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 关键词样式 */
+        .keyword {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 3px 10px;
+            margin: 3px;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 加载动画 */
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ' .'; }
+            40% { content: ' ..'; }
+            60% { content: ' ...'; }
+            80%, 100% { content: ''; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="title-particles"></div>
+    <div class="content-container">
+        <div class="glass-highlight"></div>
+        <button class="login-btn">登录 / 注册</button>
+        
+        <h1 class="main-title">AI健身助手</h1>
+        <p class="subtitle">您的个性化健身教练，随时随地为您提供专业指导</p>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="input-group">
+                <input type="text" class="form-control chat-input" id="userInput" placeholder="告诉我您的健身需求，例如：'我想开始增肌训练'">
+                <button class="btn send-btn ms-2" id="sendBtn">
+                    <i class="fas fa-paper-plane text-white"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 100, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle", stroke: { width: 0, color: "#000000" }, polygon: { nb_sides: 5 } },
+                opacity: { value: 0.6, random: true, anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false } },
+                size: { value: 3, random: true, anim: { enable: true, speed: 2, size_min: 0.1, sync: false } },
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+                move: { 
+                    enable: true, 
+                    speed: 1.5, 
+                    direction: "none", 
+                    random: true, 
+                    straight: false, 
+                    out_mode: "out", 
+                    bounce: false, 
+                    attract: { enable: true, rotateX: 600, rotateY: 1200 }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "bubble" }, onclick: { enable: true, mode: "push" }, resize: true },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 1 } },
+                    bubble: { distance: 200, size: 4, duration: 2, opacity: 0.8, speed: 3 },
+                    repulse: { distance: 200, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                    remove: { particles_nb: 2 }
+                }
+            },
+            retina_detect: true
+        });
+
+        particlesJS("title-particles", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 600 } },
+                color: { value: ["#4ecdc4", "#ff6b6b", "#c06c84"] },
+                shape: { type: "circle", stroke: { width: 0, color: "#000000" } },
+                opacity: { value: 0.8, random: true, anim: { enable: true, speed: 1, opacity_min: 0.3, sync: false } },
+                size: { value: 4, random: true, anim: { enable: true, speed: 3, size_min: 1, sync: false } },
+                line_linked: { enable: true, distance: 120, color: "#ffffff", opacity: 0.3, width: 0.8 },
+                move: { 
+                    enable: true, 
+                    speed: 2, 
+                    direction: "none", 
+                    random: true, 
+                    straight: false, 
+                    out_mode: "out", 
+                    bounce: false, 
+                    attract: { enable: true, rotateX: 600, rotateY: 1200 }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "bubble" }, onclick: { enable: true, mode: "push" }, resize: true },
+                modes: {
+                    bubble: { distance: 150, size: 5, duration: 2, opacity: 0.8, speed: 3 },
+                    push: { particles_nb: 3 }
+                }
+            },
+            retina_detect: true
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInput = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message) {
+                    chatMessages.style.display = 'block';
+                    addMessage(message, 'user');
+                    userInput.value = '';
+                    
+                    // 显示加载状态
+                    const loadingMessageId = 'loading-message-' + Date.now();
+                    const loadingMessage = document.createElement('div');
+                    loadingMessage.className = 'message ai-message';
+                    loadingMessage.id = loadingMessageId;
+                    loadingMessage.innerHTML = '<span class="loading-text">正在分析您的输入<span class="loading-dots"></span></span>';
+                    chatMessages.appendChild(loadingMessage);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // 首先发送到API获取关键词
+                    fetch('http://localhost:5000/api/keywords', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ text: message })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 移除加载消息
+                        const loadingMessage = document.getElementById(loadingMessageId);
+                        if (loadingMessage) {
+                            loadingMessage.remove();
+                        }
+                        
+                        // 显示关键词
+                        const keywordMessageDiv = document.createElement('div');
+                        keywordMessageDiv.className = 'message ai-message';
+                        
+                        // 添加标题
+                        const titleEl = document.createElement('p');
+                        titleEl.textContent = '提取的关键词：';
+                        titleEl.style.marginBottom = '8px';
+                        keywordMessageDiv.appendChild(titleEl);
+                        
+                        // 处理关键词
+                        const keywordsContainer = document.createElement('div');
+                        keywordsContainer.className = 'keywords-container';
+                        
+                        // 尝试解析关键词（可能是列表形式或其他格式）
+                        const keywordsText = data.keywords;
+                        let keywords = [];
+                        
+                        // 尝试分析可能的关键词格式
+                        if (keywordsText.includes('、') || keywordsText.includes('，')) {
+                            // 中文分隔符分割
+                            keywords = keywordsText.split(/[、，,]/);
+                        } else if (keywordsText.includes(',')) {
+                            // 英文逗号分割
+                            keywords = keywordsText.split(',');
+                        } else if (keywordsText.includes('\n')) {
+                            // 换行符分割
+                            keywords = keywordsText.split('\n');
+                        } else {
+                            // 如果没有明显的分隔符，则作为单个关键词
+                            keywords = [keywordsText];
+                        }
+                        
+                        // 过滤空字符串并添加到容器
+                        keywords.filter(k => k.trim()).forEach(keyword => {
+                            const keywordEl = document.createElement('span');
+                            keywordEl.className = 'keyword';
+                            keywordEl.textContent = keyword.trim();
+                            keywordsContainer.appendChild(keywordEl);
+                        });
+                        
+                        keywordMessageDiv.appendChild(keywordsContainer);
+                        chatMessages.appendChild(keywordMessageDiv);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        
+                        // 然后继续原来的处理逻辑
+                        setTimeout(() => {
+                            processUserInput(message);
+                        }, 1000);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        
+                        // 移除加载消息
+                        const loadingMessage = document.getElementById(loadingMessageId);
+                        if (loadingMessage) {
+                            loadingMessage.remove();
+                        }
+                        
+                        // 在出错时仍然执行原来的处理逻辑
+                        processUserInput(message);
+                    });
+                }
+            }
+            
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function processUserInput(input) {
+                const lowerInput = input.toLowerCase();
+                let response = '';
+                
+                if (lowerInput === '打开仪表盘') {
+                    response = '仪表盘功能当前已停用。您可以继续在此页面使用AI健身助手。';
+                    // 注释掉跳转代码
+                    // setTimeout(() => {
+                    //     window.location.href = 'dashboard.html';
+                    // }, 1000);
+                } else if (lowerInput.includes('增肌') || lowerInput.includes('力量')) {
+                    response = '增肌训练需要结合适当的力量训练和营养摄入。我可以为您提供个性化的增肌计划。';
+                    // 注释掉跳转代码
+                    // setTimeout(() => {
+                    //     window.location.href = 'muscle-building.html';
+                    // }, 2000);
+                } else if (lowerInput.includes('减脂') || lowerInput.includes('减肥')) {
+                    response = '减脂需要合理的饮食计划和有效的有氧训练。我可以帮您制定个性化的减脂方案。';
+                    // 注释掉跳转代码
+                    // setTimeout(() => {
+                    //     window.location.href = 'fat-loss.html';
+                    // }, 2000);
+                } else if (lowerInput.includes('塑形')) {
+                    response = '塑形训练需要针对特定部位进行有针对性的训练。我可以为您推荐适合的塑形计划。';
+                    // 注释掉跳转代码
+                    // setTimeout(() => {
+                    //     window.location.href = 'body-sculpting.html';
+                    // }, 2000);
+                } else if (lowerInput.includes('康复')) {
+                    response = '康复训练需要专业的指导和循序渐进的计划。我可以为您提供安全有效的康复建议。';
+                    // 注释掉跳转代码
+                    // setTimeout(() => {
+                    //     window.location.href = 'rehabilitation.html';
+                    // }, 2000);
+                } else {
+                    response = '您好！我是您的AI健身助手。请告诉我您的健身目标，如增肌、减脂、塑形或康复，我可以为您提供个性化的建议和计划。您也可以输入"打开仪表盘"查看您的健身数据。';
+                }
+                
+                addMessage(response, 'ai');
+            }
+            
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            document.querySelector('.login-btn').addEventListener('click', function() {
+                alert('登录/注册功能即将上线，敬请期待！');
+            });
+            
+            userInput.focus();
+            
+            setTimeout(() => {
+                chatMessages.style.display = 'block';
+                addMessage('欢迎使用AI健身助手！请告诉我您的健身需求，我将为您提供个性化的建议和计划。您也可以输入"打开仪表盘"查看您的健身数据。', 'ai');
+            }, 1000);
+        });
+        
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+            document.addEventListener('mousemove', function(e) {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                document.documentElement.style.setProperty('--mouse-x', x);
+                document.documentElement.style.setProperty('--mouse-y', y);
+            });
+        });
+    </script>
+</body>
+</html>

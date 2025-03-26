@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitLife - 您的个性化健身助手</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fc;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--primary-color) 0%, #224abe 100%);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            margin-bottom: 0.2rem;
+            border-radius: 0.35rem;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .progress {
+            height: 1rem;
+            border-radius: 0.35rem;
+        }
+        
+        .workout-card {
+            cursor: pointer;
+        }
+        
+        .workout-card img {
+            height: 180px;
+            object-fit: cover;
+            border-top-left-radius: 0.35rem;
+            border-top-right-radius: 0.35rem;
+        }
+        
+        .badge-custom {
+            font-size: 0.7rem;
+            padding: 0.35rem 0.5rem;
+            margin-right: 0.3rem;
+        }
+        
+        .form-select, .form-control {
+            border-radius: 0.35rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        .tab-content {
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 0 0 0.35rem 0.35rem;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-color: #e3e6f0 #e3e6f0 white;
+        }
+        
+        .meal-card {
+            border-radius: 0.35rem;
+            overflow: hidden;
+        }
+        
+        .meal-card img {
+            height: 160px;
+            object-fit: cover;
+        }
+        
+        .chart-container {
+            height: 300px;
+        }
+        
+        .avatar-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 d-none d-md-block sidebar p-0">
+                <div class="text-center py-4">
+                    <h4 class="text-white">FitLife</h4>
+                </div>
+                <div class="nav flex-column">
+                    <a href="#dashboard" class="nav-link active" data-bs-toggle="tab">
+                        <i class="fas fa-tachometer-alt"></i> 仪表盘
+                    </a>
+                    <a href="#user-needs" class="nav-link" data-bs-toggle="tab">
+                        <i class="fas fa-user-edit"></i> 需求定义
+                    </a>
+                    <a href="#fitness-plan" class="nav-link" data-bs-toggle="tab">
+                        <i class="fas fa-dumbbell"></i> 健身计划
+                    </a>
+                    <a href="#video-library" class="nav-link" data-bs-toggle="tab">
+                        <i class="fas fa-video"></i> 视频库
+                    </a>
+                    <a href="#progress-tracking" class="nav-link" data-bs-toggle="tab">
+                        <i class="fas fa-chart-line"></i> 进度跟踪
+                    </a>
+                    <a href="#nutrition" class="nav-link" data-bs-toggle="tab">
+                        <i class="fas fa-apple-alt"></i> 营养建议
+                    </a>
+                    <a href="#settings" class="nav-link" data-bs-toggle="tab">
+                        <i class="fas fa-cog"></i> 设置
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-10 ms-auto px-4">
+                <nav class="navbar navbar-expand-lg navbar-light mb-4">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="d-flex ms-auto">
+                            <div class="input-group me-3">
+                                <input type="text" class="form-control" placeholder="搜索...">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <div class="avatar-container">
+                                        <span>用户</span>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#">个人资料</a></li>
+                                    <li><a class="dropdown-item" href="#">设置</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">退出登录</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                
+                <div class="collapse d-md-none" id="sidebarMenu">
+                    <div class="bg-light p-3 mb-4 rounded">
+                        <div class="nav flex-column">
+                            <a href="#dashboard" class="nav-link active" data-bs-toggle="tab">
+                                <i class="fas fa-tachometer-alt"></i> 仪表盘
+                            </a>
+                            <a href="#user-needs" class="nav-link" data-bs-toggle="tab">
+                                <i class="fas fa-user-edit"></i> 需求定义
+                            </a>
+                            <a href="#fitness-plan" class="nav-link" data-bs-toggle="tab">
+                                <i class="fas fa-dumbbell"></i> 健身计划
+                            </a>
+                            <a href="#video-library" class="nav-link" data-bs-toggle="tab">
+                                <i class="fas fa-video"></i> 视频库
+                            </a>
+                            <a href="#progress-tracking" class="nav-link" data-bs-toggle="tab">
+                                <i class="fas fa-chart-line"></i> 进度跟踪
+                            </a>
+                            <a href="#nutrition" class="nav-link" data-bs-toggle="tab">
+                                <i class="fas fa-apple-alt"></i> 营养建议
+                            </a>
+                            <a href="#settings" class="nav-link" data-bs-toggle="tab">
+                                <i class="fas fa-cog"></i> 设置
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <h2 class="mb-4">仪表盘</h2>
+                        <div class="row mb-4">
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-primary h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    本周训练
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">3/5 次</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-success h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                    目标完成率
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">60%</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-info h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                    连续训练
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">7 天</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-fire fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-warning h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                    今日卡路里
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">1,200 千卡</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-burn fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-8 mb-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">训练进度概览</h6>
+                                        <div class="dropdown no-arrow">
+                                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in">
+                                                <div class="dropdown-header">图表选项:</div>
+                                                <a class="dropdown-item" href="#">按周查看</a>
+                                                <a class="dropdown-item" href="#">按月查看</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="#">导出数据</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="trainingProgressChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">目标完成情况</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="small font-weight-bold">增肌计划 <span class="float-end">60%</span></h4>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar bg-danger" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <h4 class="small font-weight-bold">核心力量 <span class="float-end">40%</span></h4>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <h4 class="small font-weight-bold">有氧训练 <span class="float-end">80%</span></h4>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <h4 class="small font-weight-bold">柔韧性 <span class="float-end">20%</span></h4>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <h4 class="small font-weight-bold">整体目标 <span class="float-end">50%</span></h4>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">今日训练计划</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                            <div class="flex-shrink-0 me-3">
+                                                <i class="fas fa-running fa-2x text-gray-300"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-1">上肢力量训练</h5>
+                                                <p class="mb-0 text-muted">30分钟 · 中等强度</p>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <button class="btn btn-primary btn-sm">开始</button>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                            <div class="flex-shrink-0 me-3">
+                                                <i class="fas fa-heartbeat fa-2x text-gray-300"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-1">有氧训练</h5>
+                                                <p class="mb-0 text-muted">20分钟 · 高强度</p>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <button class="btn btn-primary btn-sm">开始</button>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0 me-3">
+                                                <i class="fas fa-dumbbell fa-2x text-gray-300"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-1">核心训练</h5>
+                                                <p class="mb-0 text-muted">15分钟 · 低强度</p>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <button class="btn btn-primary btn-sm">开始</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">推荐视频</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card workout-card h-100">
+                                                    <img src="https://via.placeholder.com/300x180?text=上肢训练" class="card-img-top" alt="上肢训练">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">上肢力量训练</h5>
+                                                        <p class="card-text"><small class="text-muted">15分钟 · 初级</small></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card workout-card h-100">
+                                                    <img src="https://via.placeholder.com/300x180?text=核心训练" class="card-img-top" alt="核心训练">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">核心力量训练</h5>
+                                                        <p class="card-text"><small class="text-muted">10分钟 · 中级</small></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="user-needs">
+                        <h2 class="mb-4">需求定义</h2>
+                    </div>
+                    <div class="tab-pane fade" id="fitness-plan">
+                        <h2 class="mb-4">健身计划</h2>
+                    </div>
+                    <div class="tab-pane fade" id="video-library">
+                        <h2 class="mb-4">视频库</h2>
+                    </div>
+                    <div class="tab-pane fade" id="progress-tracking">
+                        <h2 class="mb-4">进度跟踪</h2>
+                    </div>
+                    <div class="tab-pane fade" id="nutrition">
+                        <h2 class="mb-4">营养建议</h2>
+                    </div>
+                    <div class="tab-pane fade" id="settings">
+                        <h2 class="mb-4">设置</h2>
+                    </div>
+                </div>
+                
+                <div class="ai-assistant-container position-fixed bottom-0 end-0 mb-4 me-4" style="width: 350px; z-index: 1000;">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center bg-primary text-white">
+                            <h6 class="m-0 font-weight-bold">FitLife 智能助手</h6>
+                            <div>
+                                <button class="btn btn-sm text-white" id="minimizeChat">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button class="btn btn-sm text-white" id="closeChat">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body chat-body" id="chatBody" style="height: 350px; overflow-y: auto;">
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0 me-2">
+                                    <div class="avatar-container" style="width: 32px; height: 32px; background-color: var(--secondary-color);">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 bg-light p-3 rounded">
+                                    <p class="mb-0">你好！我是你的健身助手。有什么可以帮到你的吗？可以询问我关于健身计划、营养建议或者训练技巧的问题。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer p-2 bg-white">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="userMessage" placeholder="输入你的问题...">
+                                <button class="btn btn-primary" type="button" id="sendMessage">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.getElementById('minimizeChat').addEventListener('click', function() {
+            const chatBody = document.getElementById('chatBody');
+            chatBody.style.display = chatBody.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        document.getElementById('closeChat').addEventListener('click', function() {
+            document.querySelector('.ai-assistant-container').style.display = 'none';
+        });
+        
+        document.getElementById('sendMessage').addEventListener('click', sendUserMessage);
+        document.getElementById('userMessage').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendUserMessage();
+        });
+        
+        function sendUserMessage() {
+            const userInput = document.getElementById('userMessage');
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            const chatBody = document.getElementById('chatBody');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'd-flex mb-3 justify-content-end';
+            userMessageDiv.innerHTML = `
+                <div class="flex-grow-1 bg-primary text-white p-3 rounded me-2" style="max-width: 80%;">
+                    <p class="mb-0">${message}</p>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="avatar-container" style="width: 32px; height: 32px;">
+                        <span>用</span>
+                    </div>
+                </div>
+            `;
+            chatBody.appendChild(userMessageDiv);
+            userInput.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            setTimeout(() => {
+                const aiResponse = getAIResponse(message);
+                const aiMessageDiv = document.createElement('div');
+                aiMessageDiv.className = 'd-flex mb-3';
+                aiMessageDiv.innerHTML = `
+                    <div class="flex-shrink-0 me-2">
+                        <div class="avatar-container" style="width: 32px; height: 32px; background-color: var(--secondary-color);">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 bg-light p-3 rounded">
+                        <p class="mb-0">${aiResponse}</p>
+                    </div>
+                `;
+                chatBody.appendChild(aiMessageDiv);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+        
+        function getAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            if (lowerMessage.includes('增肌')) {
+                return '增肌需要结合力量训练和适当的营养摄入。我建议你每周进行3-4次力量训练，重点关注大肌群，并确保每天摄入足够的蛋白质（每公斤体重1.6-2.2克）。';
+            } else if (lowerMessage.includes('减脂') || lowerMessage.includes('减肥')) {
+                return '减脂需要热量赤字，建议通过控制饮食和增加有氧运动来实现。每周进行3-5次有氧训练，每次30-60分钟，同时保持适量的力量训练以防止肌肉流失。';
+            } else if (lowerMessage.includes('饮食') || lowerMessage.includes('营养')) {
+                return '健康的饮食应该包含足够的蛋白质、碳水化合物、健康脂肪以及各种维生素和矿物质。建议多摄入瘦肉、鱼类、蛋类、全谷物、水果和蔬菜。';
+            } else if (lowerMessage.includes('训练计划')) {
+                return '我可以根据你的具体目标和身体状况为你制定个性化的训练计划。请告诉我你的目标（增肌、减脂、提高耐力等）、当前健身水平和每周可用于训练的时间。';
+            } else {
+                return '感谢你的问题！我是你的健身助手，可以帮你解答关于健身计划、营养建议、训练技巧等问题。请告诉我你具体想了解什么？';
+            }
+        }
+        
+        const ctx = document.getElementById('trainingProgressChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    datasets: [{
+                        label: '训练时长(分钟)',
+                        data: [45, 60, 0, 75, 0, 90, 30],
+                        borderColor: '#4e73df',
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
