@@ -4,8 +4,6 @@ import joblib
 import numpy as np
 import pandas as pd
 import os
-from openpyxl.styles.builtins import output
-from sympy.physics.quantum.gate import normalized
 
 '''BP网络中数据是二维的'''
 class BPNetworkTrainer:
