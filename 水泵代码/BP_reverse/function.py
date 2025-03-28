@@ -1,5 +1,5 @@
 import pandas as pd
-def merge():
+def merge(pressure):
     # 读取两个CSV文件
     df1 = pd.read_csv('./data/0.35/14_0.35_1.csv')
     df2 = pd.read_csv('./data/0.35/20_0.35_1.csv')

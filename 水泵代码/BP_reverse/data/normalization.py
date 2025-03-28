@@ -2,22 +2,34 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import joblib
 import os
+
+import os
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import joblib
+
 class DataNormalizer:
-    def __init__(self, pressure):
+    def __init__(self):
         """
         初始化 DataNormalizer 类
-        :param pressure: 用于文件路径和归一化器保存的压力值
         """
-        self.pressure = pressure
+        pass
 
-    def normalize_data(self, file_path,index):
+    def normalize_data(self, file_path, index, pressure):
         """
         读取文件并对数据进行归一化处理
         :param file_path: 输入数据文件路径
+        :param index: 当前文件的索引
+        :param pressure: 当前压力值（文件夹名称）
         """
         # 读取文件
         data = pd.read_csv(file_path)
-        print("data = ", data)
+        print(f"Processing file: {file_path}")
+        
+        # 如果数据为空，跳过
+        if data.empty:
+            print(f"Warning: {file_path} is empty. Skipping this file.")
+            return
 
         # 定义需要归一化的列
         action_columns = ['pump_1_frequency', 'pump_2_frequency', 'pump_3_frequency', 'pump_4_frequency']
@@ -42,82 +54,60 @@ class DataNormalizer:
         new_data[state_columns] = normalized_state_data
 
         # 保存归一化后的数据到文件
-        # 获取当前脚本所在的目录   # 使用 os.path.join 动态构建文件路径
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-        output_file_path = os.path.join(current_directory, f'./{pressure}/{self.pressure}_{index}_normalized_target.csv')
+        output_file_path = os.path.join(os.getcwd(), f'{pressure}/{index}_normalized.csv')
         new_data.to_csv(output_file_path, index=False)
-        print("new_data = ", new_data)
+        print(f"Normalized data saved to: {output_file_path}")
 
-        directory = f'../scaler/{pressure}'
-        # 检查目录是否存在，如果不存在，则创建
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-            print(f"目录 {directory} 创建成功")
-        else:
-            print(f"目录 {directory} 已经存在")
+        # 保存归一化器
+        scaler_dir = os.path.join(os.getcwd(), f"../scaler/{pressure}")
+        if not os.path.exists(scaler_dir):
+            os.makedirs(scaler_dir)
 
-        action_scaler_path = os.path.join(current_directory,f'../scaler/{pressure}', f'{self.pressure}_{index}_action_normalizer.pkl')
-        state_scaler_path = os.path.join(current_directory, f'../scaler/{pressure}',f'{self.pressure}_{index}_state_normalizer.pkl')
+        action_scaler_path = os.path.join(scaler_dir, f'{index}_action.pkl')
+        state_scaler_path = os.path.join(scaler_dir, f'{index}_state.pkl')
 
         joblib.dump(action_scaler, action_scaler_path)
         joblib.dump(state_scaler, state_scaler_path)
 
-        print(f"action_scaler 已经保存至 {action_scaler_path}")
-        print(f"state_scaler 已经保存至 {state_scaler_path}")
+        print(f"Scalers saved: {action_scaler_path}, {state_scaler_path}")
 
-        return new_data, action_scaler, state_scaler
+    def process_all_files(self, parent_folder):
+        """
+        遍历文件夹下的所有子文件夹（压力值文件夹），并执行归一化操作
+        :param parent_folder: 主文件夹路径
+        """
+        for folder_name in os.listdir(parent_folder):
+            folder_path = os.path.join(parent_folder, folder_name)
+            
+            if os.path.isdir(folder_path):
+                pressure = folder_name  # 将文件夹名称作为压力值
+                print(f"Processing data for pressure: {pressure}")
 
-    def check_index(self,file_path):
-        # 读取CSV文件
-        df = pd.read_csv(file_path)
+                original_folder_path = os.path.join(folder_path, 'original')
+                # 检查 original 文件夹是否存在
+                if os.path.exists(original_folder_path) and os.path.isdir(original_folder_path):
+                    print(f"Found original folder in: {pressure}")
+                    
+                    # 遍历 "original" 文件夹中的所有 CSV 文件
+                    for file_name in os.listdir(original_folder_path):
+                        if file_name.endswith('.csv'):
+                            file_path = os.path.join(original_folder_path, file_name)
+                            index = file_name.split('.')[0]  # 从文件名提取索引
+                            self.normalize_data(file_path, index, pressure)
+                else:
+                    print(f"Warning: No 'original' folder found in {pressure}. Skipping this folder.")
 
-        # 获取泵的压力列
-        pump_1_pressure = df['pump_1_pressure']
-        pump_2_pressure = df['pump_2_pressure']
-        pump_3_pressure = df['pump_3_pressure']
-
-        # 初始化index
-        index = None
-
-        # 遍历每一行
-        for i, (p1, p2, p3) in enumerate(zip(pump_1_pressure, pump_2_pressure, pump_3_pressure)):
-            # 判断泵的压力
-            if p3 < 0.1:
-                new_index = 1
-            elif p2 < 0.1:
-                new_index = 2
-            elif p1 < 0.1:
-                new_index = 3
-            else:
-                new_index = index  # 如果没有条件成立，保持原来的index
-
-            # 如果index值发生变化，打印错误并返回当前行号
-            if index is None:
-                index = new_index  # 第一次赋值
-            elif index != new_index:
-                print(f"错误的index，发生变化在第{i + 2}行")
-                return -1  # 返回发生错误的行号
-
-        # 如果index没有变化，打印正确的index
-        print(f"正确的index: {index}")
-        return index
-
-
-# 使用示例
 if __name__ == "__main__":
-    # 设置压力值
-    pressure = 0.35
-    # 1,2 - 1 ; 2,3 - 2 ; 1,3 - 3
-    index = 1
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))  
+    # 创建 DataNormalizer 对象
+    normalizer = DataNormalizer()
 
-    # 初始化 DataNormalizer 类
-    normalizer = DataNormalizer(pressure)
-    # 输入文件路径，执行归一化处理
-    file_path = f'./{pressure}/14_{pressure}_{index}.csv'
-    check = normalizer.check_index(file_path=file_path)
-    if check != -1:
-        new_data, action_scaler, state_scaler = normalizer.normalize_data(file_path, index)
-    else:
-        print("输入数据不正确，请检查报错行数")
+    # 设置主文件夹路径，这里假设文件夹路径为 "data"
+    parent_folder = '../data'
+
+    # 执行数据归一化处理
+    normalizer.process_all_files(parent_folder)
+
+        
 
 
