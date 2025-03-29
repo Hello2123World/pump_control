@@ -59,7 +59,8 @@ class BPNetworkTrainer:
             print(f"目录 {directory} 创建成功")
         else:
             print(f"目录 {directory} 已经存在")
-        model_save_path = f'./bp_net/{pressure}/{pressure}_{index}_BP_parameters_reverse.pth'
+            
+        model_save_path = f'./bp_net/{pressure}/{index}_BP.pth'
         torch.save(self.model.state_dict(), model_save_path)
         print(f"模型已保存至: {model_save_path}")
         return model_save_path
@@ -174,45 +175,71 @@ def process_and_predict(input_file, output_file, model_path, action_scaler_path,
 if __name__ == "__main__":
     # 设置 numpy 输出选项，取消科学计数法，保留四位小数
     np.set_printoptions(precision=4, suppress=True)
-    # 输入值
-    pressure = 0.35
-    index = 1
-    file_path = f'./data/{pressure}/{pressure}_{index}_normalized_target.csv'
-    input_state = np.array([[0.378,0.377,0.016,0.013,0.351,0.35,2658.56]])
-
-    # 文件路径
-    action_scaler_path = f'./scaler/{pressure}/{pressure}_{index}_action_normalizer.pkl'
-    state_scaler_path = f'./scaler/{pressure}/{pressure}_{index}_state_normalizer.pkl'
-
-    # BPNN 神经网络模型
-    model = BPNNModel.BPNN()
-    # 加载归一化器
-    action_scaler = joblib.load(action_scaler_path)
-    state_scaler = joblib.load(state_scaler_path)
-
-    # 创建 BPNetworkTrainer 类实例,训练BP网络
-    # trainer = BPNetworkTrainer(model)
-    # model_path = trainer.train_bp_model(file_path, pressure,index)
-    model_path = f"./bp_net/{pressure}/{pressure}_{index}_BP_parameters_reverse.pth"
-
-    # 使用 BPNNModel 进行预测
-    bp_model = BPNNModel(model_path=model_path,
-                         action_scaler_path=action_scaler_path,
-                         state_scaler_path= state_scaler_path)
-
-    # 获取预测的原始状态
-    original_action = bp_model.predict_bp_model(input_state)
-    print(f"输入的状态为{input_state[0]}")
-    print(f'预测的原始动作: {original_action[0]}')
-
-    # 对比输出效果
-    input_file = f"./data/{pressure}/23_0.35_1.csv"
-    directory = f'./compare/{pressure}'
-    # 检查目录是否存在，如果不存在，则创建
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-        print(f"目录 {directory} 创建成功")
-    else:
-        print(f"目录 {directory} 已经存在")
-    output_file = f"./compare/{pressure}/{pressure}_{index}_comparison_actions.csv"
-    process_and_predict(input_file,output_file, model_path, action_scaler_path, state_scaler_path)
+    # 保证运行时候脚本位置
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))  
+    
+    # 自动遍历所有压力值和序号
+    data_dir = './data'
+    # 获取所有压力值文件夹
+    pressure_folders = [folder for folder in os.listdir(data_dir) if os.path.isdir(os.path.join(data_dir, folder))]
+    
+    for pressure_folder in pressure_folders:
+        pressure = float(pressure_folder)  # 将文件夹名转换为浮点数
+        pressure_path = os.path.join(data_dir, pressure_folder)
+        
+        # 获取该压力值下的所有序号文件（查找格式为 "{index}_normalized.csv" 的文件）
+        index_files = [f for f in os.listdir(pressure_path) if f.endswith('_normalized.csv')]
+        
+        for index_file in index_files:
+            # 从文件名中提取序号
+            index = int(index_file.split('_')[0])
+            print(f"\n开始处理: 压力值 = {pressure}, 序号 = {index}")
+            
+            # 设置文件路径
+            file_path = f'./data/{pressure}/{index}_normalized.csv'
+            
+            # 检查文件是否存在
+            if not os.path.exists(file_path):
+                print(f"文件不存在: {file_path}，跳过")
+                continue
+                
+            # 设置其他路径
+            action_scaler_path = f'./scaler/{pressure}/{index}_action.pkl'
+            state_scaler_path = f'./scaler/{pressure}/{index}_state.pkl'
+            
+            # 检查归一化器文件是否存在
+            if not os.path.exists(action_scaler_path) or not os.path.exists(state_scaler_path):
+                print(f"归一化器文件不存在: {action_scaler_path} 或 {state_scaler_path}，跳过")
+                continue
+            
+            try:
+                # 输入示例状态（使用固定示例或从数据中获取）
+                input_state = np.array([[0.378, 0.377, 0.016, 0.013, 0.351, 0.35, 2658.56]])
+                
+                # BPNN 神经网络模型
+                model = BPNNModel.BPNN()
+                
+                # 加载归一化器
+                action_scaler = joblib.load(action_scaler_path)
+                state_scaler = joblib.load(state_scaler_path)
+                
+                # 创建 BPNetworkTrainer 类实例,训练BP网络
+                trainer = BPNetworkTrainer(model)
+                model_path = trainer.train_bp_model(file_path, pressure, index)
+                
+                # 使用 BPNNModel 进行预测
+                bp_model = BPNNModel(model_path=model_path,
+                                    action_scaler_path=action_scaler_path,
+                                    state_scaler_path=state_scaler_path)
+                
+                # 获取预测的原始状态
+                original_action = bp_model.predict_bp_model(input_state)
+                print(f"输入的状态为: {input_state[0]}")
+                print(f"预测的原始动作: {original_action[0]}")
+                print(f"压力值 {pressure}, 序号 {index} 处理完成")
+                
+            except Exception as e:
+                print(f"处理压力值 {pressure}, 序号 {index} 时出错: {str(e)}")
+                continue
+    
+    print("\n所有数据处理完成！")
