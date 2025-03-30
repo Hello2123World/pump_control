@@ -27,9 +27,9 @@ def predict_action(input_state, pressure):
     # print("index = ", index)
 
     # 构造模型路径和归一化器路径
-    model_path = f'./bp_net/{pressure}/{pressure}_{index}_BP_parameters_reverse.pth'
-    action_scaler_path = f'./scaler/{pressure}/{pressure}_{index}_action_normalizer.pkl'
-    state_scaler_path = f'./scaler/{pressure}/{pressure}_{index}_state_normalizer.pkl'
+    model_path = f'./bp_net/{pressure}/{index}_BP.pth'
+    action_scaler_path = f'./scaler/{pressure}/{index}_action.pkl'
+    state_scaler_path = f'./scaler/{pressure}/{index}_state.pkl'
 
     # 创建 BPNNModel 实例
     bp_model = BPNNModel(model_path=model_path,
@@ -47,8 +47,8 @@ def predict_action(input_state, pressure):
 if __name__ == "__main__":
     np.set_printoptions(precision=4, suppress=True)
     input_state_1 = np.array([[0.431,0.429,0.014,0.012,0.41,0.41,1389.47]])  # 输入状态
-    input_state_3 = np.array([[0.013,0.434,0.438,0.012,0.41,0.41,2006.94]])  # 输入状态
+    # input_state_3 = np.array([[0.013,0.434,0.438,0.012,0.41,0.41,2006.94]])  # 输入状态
     pressure = 0.41  # 压力值
 
     # 调用函数并输出结果
-    predict_action(input_state_3, pressure)
+    predict_action(input_state_1, pressure)
